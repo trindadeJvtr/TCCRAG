@@ -1,0 +1,13 @@
+langchain
+torch>=1.12.0
+huggingface_hub
+transformers
+openai
+markdown
+langchain_community
+beautifulsoup4
+streamlit
+langchain_docling
+sentence-transformers
+langchain-huggingface
+chromadb
