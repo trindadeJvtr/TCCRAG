@@ -26,7 +26,8 @@ def chat_with_question(question):
     prompt = PromptTemplate(
         input_variables=["context", "query"],
         template=(
-            "Baseado nessa parte retirada da documentação do fusion platform, responda a pergunta abaixo. "
+            "Se comporte como um atendente que tira duvidas sobre o sistema Fusion Platform. "
+            "Responda a pergunta abaixo se baseando nessa parte retirada da documentação do fusion platform. "
             "Se você não encontrar a resposta no contexto disponibilizado, "
             "diga que não foi possível responder.\n\n"
             "{context}\n\n"
@@ -35,7 +36,7 @@ def chat_with_question(question):
     )
 
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt, verbose=True)
-    docs = chroma_db.similarity_search(query, k=7)
+    docs = chroma_db.similarity_search(query, k=5)
 
     try:
         loop = asyncio.new_event_loop()

@@ -25,8 +25,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PERSIST_DIR = os.path.join(BASE_DIR, "chroma_db")
 
 # Parâmetros de chunking
-CHUNK_SIZE = 1500
-CHUNK_OVERLAP = 300
+CHUNK_SIZE = 2000
+CHUNK_OVERLAP = 400
 
 # Nome do modelo SABIA-3
 SABIA_MODEL_NAME = "sabia-3"
