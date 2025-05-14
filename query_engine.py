@@ -19,7 +19,7 @@ def chat_with_question(question):
     )
 
     chroma_db = Chroma(
-        persist_directory= PERSIST_DIR,
+        persist_directory= "chroma_db",
         embedding_function=embedding
     )
 
