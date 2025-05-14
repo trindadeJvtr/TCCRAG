@@ -1,5 +1,5 @@
 import streamlit as st
-from query_engine import chat_with_question  # Seu método customizado
+from query_engine import chat_with_question
 
 st.title("Chatbot Fusion Platform 🤖")
 

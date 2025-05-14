@@ -40,7 +40,7 @@ def insert_document(directory_path):
     chroma_db = Chroma.from_documents(
         all_chunks,
         embedding=embeddings,
-        persist_directory=PERSIST_DIR
+        persist_directory= "./chroma_db",
     )
 
     chroma_db.persist()
