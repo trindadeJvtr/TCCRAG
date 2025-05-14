@@ -1,41 +1,23 @@
 import streamlit as st
-from query_engine import chat_with_question
-from embeddings import insert_document
+from query_engine import chat_with_question  # Seu método customizado
 
-st.set_page_config(page_title="Chat com RAG", layout="wide")
-st.html("<style> .main {overflow: hidden} </style>")
+st.title("Chatbot Fusion Platform 🤖")
 
-def processar_mensagem(mensagem):
-    with st.container():
-        with st.spinner("Pensando..."):
-            return chat_with_question(mensagem)
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# Inicializa histórico se não existir
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# Função chamada ao enviar a pergunta
-def enviar_mensagem():
-    mensagem = st.session_state["mensagem"]
-    if mensagem.strip() == "":
-        return
-    st.session_state.chat_history.append(("Você", mensagem, "user"))
-    resposta = processar_mensagem(mensagem)
-    st.session_state.chat_history.append(("RAG", resposta, "bot"))
-    st.session_state["mensagem"] = ""  # Limpa o campo após envio
+if prompt := st.chat_input("Faça uma consulta à documentação do Fusion!"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-# Interface
-with st.container():
-    st.title("💬 Chatbot para consulta da documentação do Fusion Platform 🤖")
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        st.text_input("Digite sua pergunta:", key="mensagem", label_visibility="collapsed")
-    with col2:
-        st.button("Enviar", on_click=enviar_mensagem, use_container_width=True)
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            response = chat_with_question(prompt)
+            st.markdown(response)
 
-with st.container(height=600):
-    for remetente, msg, classe in reversed(st.session_state.chat_history):
-        if classe == "bot":
-            st.info(f"**{remetente}:** {msg}")
-        else:
-            st.warning(f"**{remetente}:** {msg}")
+    st.session_state.messages.append({"role": "assistant", "content": response})
