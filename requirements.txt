@@ -10,4 +10,5 @@ streamlit
 langchain_docling
 sentence-transformers
 langchain-huggingface
-chromadb
+chromadb==0.4.24
+protobuf==4.23.4
