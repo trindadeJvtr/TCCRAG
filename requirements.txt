@@ -12,3 +12,4 @@ sentence-transformers
 langchain-huggingface
 chromadb==0.4.24
 protobuf==4.23.4
+numpy==1.23.5
