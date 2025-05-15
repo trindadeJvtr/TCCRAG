@@ -44,7 +44,6 @@ def chat_with_question(question):
         
         answer = loop.run_until_complete(chain.ainvoke({"input_documents": docs, "query": query}))
 
-        print("RESPOSTA DO CHAT:", answer["output_text"])
         return answer["output_text"]
     except Exception as e:
         print(f"Erro durante execução: {e}")
