@@ -22,5 +22,5 @@ CHUNK_OVERLAP = 400
 # Nome do modelo SABIA-3
 SABIA_MODEL_NAME = "sabia-3"
 
-SABIA_TOKEN = "104224658738889011687_558189197bfd43cb"
-##SABIA_TOKEN = st.secrets.get("SABIA_API_KEY", os.getenv("SABIA_API_KEY"))
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY"))
+PROJECT_ID = st.secrets.get("PROJECT_ID", os.getenv("PROJECT_ID"))
