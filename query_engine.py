@@ -1,21 +1,44 @@
+import streamlit as st
 from openai import OpenAI
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.prompts import PromptTemplate
 from config import HUGGINGFACE_MODEL, OPENAI_API_KEY, PROJECT_ID
 
-def chat_with_question(question):
-    query = question
-    embedding = HuggingFaceEmbeddings(model_name=HUGGINGFACE_MODEL)
 
-    chroma_db = Chroma(
+# Cache do modelo de embedding
+@st.cache_resource(show_spinner=False)
+def carregar_embedding():
+    return HuggingFaceEmbeddings(model_name=HUGGINGFACE_MODEL)
+
+
+# Cache da base vetorial Chroma
+@st.cache_resource(show_spinner=False)
+def carregar_chroma():
+    embedding = carregar_embedding()
+    return Chroma(
         persist_directory="./chroma_db",
         embedding_function=embedding
     )
 
+
+# Cache do cliente OpenAI
+@st.cache_resource(show_spinner=False)
+def carregar_openai():
+    return OpenAI(api_key=OPENAI_API_KEY, project=PROJECT_ID)
+
+
+# Função principal de resposta ao usuário
+def chat_with_question(question):
+    query = question
+    chroma_db = carregar_chroma()
+    client = carregar_openai()
+
+    # Busca por similaridade no banco Chroma
     docs = chroma_db.similarity_search(query, k=5)
     context = "\n\n".join([doc.page_content for doc in docs])
 
+    # Template do prompt
     prompt_template = PromptTemplate(
         input_variables=["context", "query"],
         template=(
@@ -33,8 +56,7 @@ def chat_with_question(question):
 
     prompt = prompt_template.format(context=context, query=query)
 
-    client = OpenAI(api_key=OPENAI_API_KEY, project=PROJECT_ID)
-
+    # Chamada à OpenAI
     try:
         response = client.chat.completions.create(
             model="gpt-4-turbo",
@@ -43,7 +65,6 @@ def chat_with_question(question):
                 {"role": "user", "content": prompt}
             ]
         )
-
         return response.choices[0].message.content
 
     except Exception as e:
