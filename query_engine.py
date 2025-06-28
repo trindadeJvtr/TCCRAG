@@ -6,13 +6,11 @@ from langchain.prompts import PromptTemplate
 from config import HUGGINGFACE_MODEL, OPENAI_API_KEY, PROJECT_ID
 
 
-# Cache do modelo de embedding
 @st.cache_resource(show_spinner=False)
 def carregar_embedding():
     return HuggingFaceEmbeddings(model_name=HUGGINGFACE_MODEL)
 
 
-# Cache da base vetorial Chroma
 @st.cache_resource(show_spinner=False)
 def carregar_chroma():
     embedding = carregar_embedding()
@@ -22,23 +20,19 @@ def carregar_chroma():
     )
 
 
-# Cache do cliente OpenAI
 @st.cache_resource(show_spinner=False)
 def carregar_openai():
     return OpenAI(api_key=OPENAI_API_KEY, project=PROJECT_ID)
 
 
-# Função principal de resposta ao usuário
 def chat_with_question(question):
     query = question
     chroma_db = carregar_chroma()
     client = carregar_openai()
 
-    # Busca por similaridade no banco Chroma
     docs = chroma_db.similarity_search(query, k=5)
     context = "\n\n".join([doc.page_content for doc in docs])
 
-    # Template do prompt
     prompt_template = PromptTemplate(
         input_variables=["context", "query"],
         template=(
@@ -56,7 +50,6 @@ def chat_with_question(question):
 
     prompt = prompt_template.format(context=context, query=query)
 
-    # Chamada à OpenAI
     try:
         response = client.chat.completions.create(
             model="gpt-4-turbo",
